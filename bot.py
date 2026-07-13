@@ -10,10 +10,9 @@ TOKEN = os.environ["TOKEN"]
 bot = telebot.TeleBot(TOKEN)
 
 BASE_DIR = os.path.dirname(__file__)
-QR_IMAGE_PATH = os.path.join(BASE_DIR, "upi_qr.jpg")
+QR_IMAGE_PATH = os.path.join(BASE_DIR, "assets", "upi_qr.jpg")
 DEVICES_JSON_PATH = os.path.join(BASE_DIR, "devices.json")
 MODELS_PER_PAGE = 8
-
 
 
 def load_device_data():
@@ -39,85 +38,6 @@ def get_aincard_markup():
     return markup
 
 
-NON_ROOT_ITEMS = [
-    ("🔑 PRIMEHOOK", "non_root_primehook"),
-    ("🔹 DRIP CLIENT", "non_root_drip_client"),
-    ("🔹 DRIP PROXY", "non_root_drip_proxy"),
-    ("🔹 SILENT NON ROOT", "non_root_silent_non_root"),
-    ("🔹 HG CLIENT", "non_root_hg_client"),
-    ("🔹 BR MOD NON ROOT", "non_root_br_mod"),
-    ("🔹 PATI BLUE", "non_root_pati_blue"),
-    ("🔹 PATO ORANGE", "non_root_pato_orange"),
-]
-
-NON_ROOT_PLANS = {
-    "non_root_primehook": (
-        "🔑 **PRIMEHOOK KEY**\n\n"
-        "1 DAY  - ₹70\n"
-        "3 DAY  - ₹160\n"
-        "7 DAY  - ₹280\n"
-        "15 DAY - ₹450\n"
-        "30 DAY - ₹700"
-    ),
-    "non_root_drip_client": (
-        "🔹 **DRIP CLIENT KEY**\n\n"
-        "1 DAY  - ₹60\n"
-        "3 DAY  - ₹140\n"
-        "7 DAY  - ₹260\n"
-        "15 DAY - ₹400\n"
-        "30 DAY - ₹600"
-    ),
-    "non_root_drip_proxy": (
-        "🔹 **DRIP PROXY KEY**\n\n"
-        "1 DAY  - ₹60\n"
-        "3 DAY  - ₹140\n"
-        "7 DAY  - ₹260\n"
-        "15 DAY - ₹400\n"
-        "30 DAY - ₹600"
-    ),
-    "non_root_silent_non_root": (
-        "🔹 **SILENT NON ROOT KEY**\n\n"
-        "1 DAY  - ₹70\n"
-        "3 DAY  - ₹150\n"
-        "7 DAY  - ₹270\n"
-        "15 DAY - ₹420\n"
-        "30 DAY - ₹650"
-    ),
-    "non_root_hg_client": (
-        "🔹 **HG CLIENT KEY**\n\n"
-        "1 DAY  - ₹80\n"
-        "3 DAY  - ₹180\n"
-        "7 DAY  - ₹320\n"
-        "15 DAY - ₹500\n"
-        "30 DAY - ₹750"
-    ),
-    "non_root_br_mod": (
-        "🔹 **BR MOD NON ROOT KEY**\n\n"
-        "1 DAY  - ₹60\n"
-        "3 DAY  - ₹140\n"
-        "7 DAY  - ₹260\n"
-        "15 DAY - ₹400\n"
-        "30 DAY - ₹600"
-    ),
-    "non_root_pati_blue": (
-        "🔹 **PATI BLUE KEY**\n\n"
-        "1 DAY  - ₹60\n"
-        "3 DAY  - ₹130\n"
-        "7 DAY  - ₹240\n"
-        "15 DAY - ₹380\n"
-        "30 DAY - ₹550"
-    ),
-    "non_root_pato_orange": (
-        "🔹 **PATO ORANGE KEY**\n\n"
-        "1 DAY  - ₹60\n"
-        "3 DAY  - ₹130\n"
-        "7 DAY  - ₹240\n"
-        "15 DAY - ₹380\n"
-        "30 DAY - ₹550"
-    ),
-}
-
-
 def get_non_root_markup():
     markup = types.InlineKeyboardMarkup(row_width=2)
     markup.row(types.InlineKeyboardButton("🔑 PRIMEHOOK", callback_data="non_root_primehook"))
@@ -134,6 +54,19 @@ def get_non_root_markup():
     )
     markup.row(types.InlineKeyboardButton("↩️ Back to Shop", callback_data="back_to_shop_clean"))
     return markup
+
+
+# Sabhi Non Root items ki pricing aur details
+PLANS_DATA = {
+    "primehook": {"name": "PRIMEHOOK", "prices": {"1d": 70, "3d": 160, "7d": 280, "15d": 450, "30d": 700}},
+    "drip_client": {"name": "DRIP CLIENT", "prices": {"1d": 60, "3d": 140, "7d": 260, "15d": 400, "30d": 600}},
+    "drip_proxy": {"name": "DRIP PROXY", "prices": {"1d": 60, "3d": 140, "7d": 260, "15d": 400, "30d": 600}},
+    "silent_non_root": {"name": "SILENT NON ROOT", "prices": {"1d": 70, "3d": 150, "7d": 270, "15d": 420, "30d": 650}},
+    "hg_client": {"name": "HG CLIENT", "prices": {"1d": 80, "3d": 180, "7d": 320, "15d": 500, "30d": 750}},
+    "br_mod": {"name": "BR MOD NON ROOT", "prices": {"1d": 60, "3d": 140, "7d": 260, "15d": 400, "30d": 600}},
+    "pati_blue": {"name": "PATI BLUE", "prices": {"1d": 60, "3d": 130, "7d": 240, "15d": 380, "30d": 550}},
+    "pato_orange": {"name": "PATO ORANGE", "prices": {"1d": 60, "3d": 130, "7d": 240, "15d": 380, "30d": 550}},
+}
 
 
 def get_brands_markup():
@@ -155,10 +88,8 @@ def build_timer_text(remaining):
     total = 120
     minutes = remaining // 60
     seconds = remaining % 60
-
     filled_slots = round(((total - remaining) / total) * 10)
     bar = "▓" * filled_slots + "░" * (10 - filled_slots)
-
     return (
         "✅ *Payment Done!*\n"
         "━━━━━━━━━━━━━━\n"
@@ -181,7 +112,6 @@ def run_payment_timer(chat_id, message_id):
         except Exception:
             pass
         time.sleep(2)
-
     try:
         bot.edit_message_text(
             chat_id=chat_id,
@@ -222,9 +152,6 @@ def send_payment_details(chat_id, item_name, amount):
         )
 
 
-# ----------------------------------------------------
-# STEP 1: MAIN SHOP MENU
-# ----------------------------------------------------
 @bot.message_handler(commands=["shop", "start"])
 def send_shop_menu(message):
     bot.send_message(
@@ -240,13 +167,9 @@ def send_id(message):
     bot.send_message(message.chat.id, f"🆔 Your Telegram ID: {message.from_user.id}")
 
 
-# ----------------------------------------------------
-# STEP 2 & 3: CALLBACK HANDLER (CLICK LOGIC)
-# ----------------------------------------------------
 @bot.callback_query_handler(func=lambda call: True)
 def handle_menu_clicks(call):
 
-    # --- ROOT APP: SEEDHA QR AUR ₹100 PAYMENT DETAILS ---
     if call.data == "main_root_app":
         try:
             bot.delete_message(call.message.chat.id, call.message.message_id)
@@ -254,7 +177,6 @@ def handle_menu_clicks(call):
             pass
         send_payment_details(call.message.chat.id, "Root App", 100)
 
-    # --- BOOT IMAGE PAR CLICK KARNE PAR BRANDS LIST ---
     elif call.data == "main_boot_image":
         try:
             bot.edit_message_text(
@@ -272,7 +194,6 @@ def handle_menu_clicks(call):
                 parse_mode="Markdown",
             )
 
-    # --- PAYMENT DONE (STYLISH LIVE TIMER) ---
     elif call.data == "payment_done":
         bot.answer_callback_query(call.id)
         sent = bot.send_message(
@@ -286,7 +207,6 @@ def handle_menu_clicks(call):
             daemon=True,
         ).start()
 
-    # --- AINCARD PAR CLICK KARNE PAR AINCARD MENU ---
     elif call.data == "main_aincard":
         try:
             bot.edit_message_text(
@@ -304,7 +224,6 @@ def handle_menu_clicks(call):
                 parse_mode="Markdown",
             )
 
-    # --- AINCARD KEY ---
     elif call.data == "aincard_key":
         bot.answer_callback_query(call.id)
         try:
@@ -313,7 +232,6 @@ def handle_menu_clicks(call):
             pass
         send_payment_details(call.message.chat.id, "Aincard Key", 20)
 
-    # --- AINCARD KEY APP ---
     elif call.data == "aincard_key_app":
         bot.answer_callback_query(call.id)
         try:
@@ -322,7 +240,7 @@ def handle_menu_clicks(call):
             pass
         send_payment_details(call.message.chat.id, "Aincard Key App", 100)
 
-    # --- NON ROOT PANEL MENU ---
+    # --- NON ROOT PANEL MAIN MENU ---
     elif call.data == "main_non_root":
         try:
             bot.edit_message_text(
@@ -340,18 +258,55 @@ def handle_menu_clicks(call):
                 parse_mode="Markdown",
             )
 
-    # --- NON ROOT PANEL ITEMS ---
+    # --- NON ROOT PANELS PAR CLICK ---
     elif call.data.startswith("non_root_"):
         bot.answer_callback_query(call.id)
-        plan_text = NON_ROOT_PLANS.get(call.data)
-        if plan_text:
-            bot.send_message(
-                call.message.chat.id,
-                plan_text,
+        key_type = call.data.replace("non_root_", "")
+        
+        if key_type in PLANS_DATA:
+            item_info = PLANS_DATA[key_type]
+            markup = types.InlineKeyboardMarkup(row_width=2)
+            
+            btn_1d = types.InlineKeyboardButton(f"1 DAY - ₹{item_info['prices']['1d']}", callback_data=f"pay_{key_type}_1d")
+            btn_3d = types.InlineKeyboardButton(f"3 DAY - ₹{item_info['prices']['3d']}", callback_data=f"pay_{key_type}_3d")
+            btn_7d = types.InlineKeyboardButton(f"7 DAY - ₹{item_info['prices']['7d']}", callback_data=f"pay_{key_type}_7d")
+            btn_15d = types.InlineKeyboardButton(f"15 DAY - ₹{item_info['prices']['15d']}", callback_data=f"pay_{key_type}_15d")
+            btn_30d = types.InlineKeyboardButton(f"30 DAY - ₹{item_info['prices']['30d']}", callback_data=f"pay_{key_type}_30d")
+            back_btn = types.InlineKeyboardButton("🔙 Back to List", callback_data="main_non_root")
+            
+            markup.add(btn_1d, btn_3d)
+            markup.add(btn_7d, btn_15d)
+            markup.add(btn_30d)
+            markup.add(back_btn)
+
+            bot.edit_message_text(
+                chat_id=call.message.chat.id,
+                message_id=call.message.message_id,
+                text=f"🔹 **{item_info['name']} MENU**\n\nChoose your validity plan below:",
+                reply_markup=markup,
                 parse_mode="Markdown",
             )
 
-    # --- BRAND SELECT HUA YA PAGE BADLA (Format: brand_<brandId>_<page>) ---
+    # --- VALIDITY PLANS PAR CLICK KARNE PAR PAY DETAILS ---
+    elif call.data.startswith("pay_"):
+        bot.answer_callback_query(call.id)
+        parts = call.data.split("_")
+        duration = parts[-1] 
+        key_type = "_".join(parts[1:-1])
+        
+        if key_type in PLANS_DATA and duration in PLANS_DATA[key_type]["prices"]:
+            item_info = PLANS_DATA[key_type]
+            amount = item_info["prices"][duration]
+            display_duration = duration.upper().replace("D", " DAY")
+            
+            try:
+                bot.delete_message(call.message.chat.id, call.message.message_id)
+            except Exception:
+                pass
+                
+            send_payment_details(call.message.chat.id, f"{item_info['name']} ({display_duration})", amount)
+
+    # --- BRAND PAGE SELECTION LOGIC ---
     elif call.data.startswith("brand_"):
         device_data = load_device_data()
         parts = call.data.split("_")
@@ -405,7 +360,7 @@ def handle_menu_clicks(call):
                 parse_mode="Markdown",
             )
 
-    # --- MODEL SELECT HUA -> QR CODE BHEJO ---
+    # --- MODEL SELECT KARNE PAR QR LOGIC (FIXED INNER PATHS) ---
     elif call.data.startswith("model_"):
         device_data = load_device_data()
         parts = call.data.split("_", 2)
@@ -414,7 +369,13 @@ def handle_menu_clicks(call):
 
         try:
             model_info = device_data[brand_id]["models"][model_id]
-            qr_path = os.path.join(BASE_DIR, model_info["qr"])
+            
+            # Absolute path matching update for system compatibility
+            qr_relative_path = model_info["qr"]
+            if qr_relative_path.startswith("assets/"):
+                qr_relative_path = qr_relative_path.replace("assets/", "", 1)
+                
+            qr_path = os.path.join(BASE_DIR, "assets", qr_relative_path)
 
             try:
                 bot.delete_message(call.message.chat.id, call.message.message_id)
@@ -433,9 +394,8 @@ def handle_menu_clicks(call):
                     parse_mode="Markdown",
                 )
         except Exception:
-            bot.answer_callback_query(call.id, text="⚠️ QR Code file nahi mili!", show_alert=True)
+            bot.answer_callback_query(call.id, text="⚠️ QR Code file load nahi ho saki!", show_alert=True)
 
-    # --- WAPAS BRANDS LIST PAR JAANE KE LIYE ---
     elif call.data == "back_to_brands":
         try:
             bot.edit_message_text(
@@ -453,7 +413,6 @@ def handle_menu_clicks(call):
                 parse_mode="Markdown",
             )
 
-    # --- WAPAS MAIN MENU PAR JAANE KE LIYE ---
     elif call.data == "back_to_shop_clean":
         try:
             bot.delete_message(call.message.chat.id, call.message.message_id)
@@ -469,3 +428,4 @@ def handle_menu_clicks(call):
 
 print("Bot started...")
 bot.infinity_polling()
+    
