@@ -1,219 +1,143 @@
+import json
+import os
+import threading
+import time
+
 import telebot
 from telebot import types
 
-# 🟢 CONFIGURATION SET (Direct file path setup)
-API_TOKEN = '8764761380:AAHgpdixVRmVL8D71tqj3bHtgFRvJLXJqWg'
-QR_IMAGE_PATH = 'upi_qr.jpg'  # Ab ye direct file dhoondhega, bina kisi folder ke!
+TOKEN = os.environ["TOKEN"]
+bot = telebot.TeleBot(TOKEN)
 
-bot = telebot.TeleBot(API_TOKEN)
+BASE_DIR = os.path.dirname(__file__)
+# QR PATH YAHAN UPDATE KAR DIYA HAI
+QR_IMAGE_PATH = os.path.join(BASE_DIR, "assets", "upi_qr.jpg") 
+DEVICES_JSON_PATH = os.path.join(BASE_DIR, "devices.json")
+MODELS_PER_PAGE = 8
 
-# 📊 COMPLETE DATABASE
-PLANS_DATA = {
-    # --- NON ROOT PANEL ---
-    "primehook": {"name": "PRIMEHOOK", "prices": {"1d": 100, "3d": 200, "7d": 400, "15d": 700, "30d": 1000}},
-    "drip_client": {"name": "DRIP CLIENT", "prices": {"1d": 90, "3d": 180, "7d": 350, "15d": 600, "30d": 900}},
-    "drip_proxy": {"name": "DRIP PROXY", "prices": {"1d": 90, "3d": 180, "7d": 350, "15d": 600, "30d": 900}},
-    "silent_non_root": {"name": "SILENT NON ROOT", "prices": {"1d": 90, "3d": 180, "7d": 350, "15d": 600, "30d": 900}},
-    "hg_client": {"name": "HG CLIENT", "prices": {"1d": 100, "3d": 200, "7d": 400, "15d": 700, "30d": 1000}},
-    "br_mod": {"name": "BR MOD NON ROOT", "prices": {"1d": 90, "3d": 180, "7d": 350, "15d": 600, "30d": 900}},
-    "pati_blue": {"name": "PATI BLUE", "prices": {"1d": 80, "3d": 160, "7d": 300, "15d": 500, "30d": 800}},
-    "pato_orange": {"name": "PATO ORANGE", "prices": {"1d": 80, "3d": 160, "7d": 300, "15d": 500, "30d": 800}},
-    
-    # --- ROOT PANEL ---
-    "root_prime": {"name": "ROOT PRIMEHOOK", "prices": {"1d": 120, "3d": 250, "7d": 500, "30d": 1200}},
-    "root_drip": {"name": "ROOT DRIP CLIENT", "prices": {"1d": 110, "3d": 220, "7d": 450, "30d": 1100}},
-    
-    # --- BOOT IMAGE ---
-    "boot_img": {"name": "CUSTOM BOOT IMAGE", "prices": {"1d": 50, "3d": 100, "7d": 200, "30d": 500}},
-    
-    # --- AVINCHARD ---
-    "avinchard": {"name": "AVINCHARD PREMIUM", "prices": {"1d": 150, "3d": 300, "7d": 600, "30d": 1500}}
+def load_device_data():
+    with open(DEVICES_JSON_PATH, "r") as file:
+        return json.load(file)
+
+def main_menu_markup():
+    markup = types.InlineKeyboardMarkup(row_width=1)
+    opt1 = types.InlineKeyboardButton("📲 Root App (₹100)", callback_data="main_root_app")
+    opt2 = types.InlineKeyboardButton("🖼️ Boot Image (All Brands)", callback_data="main_boot_image")
+    opt3 = types.InlineKeyboardButton("💳 Aincard", callback_data="main_aincard")
+    opt4 = types.InlineKeyboardButton("📱 NON ROOT PANEL", callback_data="main_non_root")
+    markup.add(opt1, opt2, opt3, opt4)
+    return markup
+
+def get_aincard_markup():
+    markup = types.InlineKeyboardMarkup(row_width=1)
+    markup.add(types.InlineKeyboardButton("🔑 Aincard Key", callback_data="aincard_key"))
+    markup.add(types.InlineKeyboardButton("📲 Aincard Key App", callback_data="aincard_key_app"))
+    markup.add(types.InlineKeyboardButton("↩️ Back to Shop", callback_data="back_to_shop_clean"))
+    return markup
+
+NON_ROOT_PLANS = {
+    "non_root_primehook": ("🔑 **PRIMEHOOK KEY**\n\n1 DAY - ₹70\n3 DAY - ₹160\n7 DAY - ₹280\n15 DAY - ₹450\n30 DAY - ₹700"),
+    "non_root_drip_client": ("🔹 **DRIP CLIENT KEY**\n\n1 DAY - ₹60\n3 DAY - ₹140\n7 DAY - ₹260\n15 DAY - ₹400\n30 DAY - ₹600"),
+    "non_root_drip_proxy": ("🔹 **DRIP PROXY KEY**\n\n1 DAY - ₹60\n3 DAY - ₹140\n7 DAY - ₹260\n15 DAY - ₹400\n30 DAY - ₹600"),
+    "non_root_silent_non_root": ("🔹 **SILENT NON ROOT KEY**\n\n1 DAY - ₹70\n3 DAY - ₹150\n7 DAY - ₹270\n15 DAY - ₹420\n30 DAY - ₹650"),
+    "non_root_hg_client": ("🔹 **HG CLIENT KEY**\n\n1 DAY - ₹80\n3 DAY - ₹180\n7 DAY - ₹320\n15 DAY - ₹500\n30 DAY - ₹750"),
+    "non_root_br_mod": ("🔹 **BR MOD NON ROOT KEY**\n\n1 DAY - ₹60\n3 DAY - ₹140\n7 DAY - ₹260\n15 DAY - ₹400\n30 DAY - ₹600"),
+    "non_root_pati_blue": ("🔹 **PATI BLUE KEY**\n\n1 DAY - ₹60\n3 DAY - ₹130\n7 DAY - ₹240\n15 DAY - ₹380\n30 DAY - ₹550"),
+    "non_root_pato_orange": ("🔹 **PATO ORANGE KEY**\n\n1 DAY - ₹60\n3 DAY - ₹130\n7 DAY - ₹240\n15 DAY - ₹380\n30 DAY - ₹550"),
 }
 
-# 📋 KEYBOARD GENERATORS
-
-def get_main_shop_markup():
-    markup = types.InlineKeyboardMarkup(row_width=1)
-    markup.add(
-        types.InlineKeyboardButton("📱 NON ROOT PANEL", callback_data="main_non_root"),
-        types.InlineKeyboardButton("🛡️ ROOT PANEL", callback_data="main_root"),
-        types.InlineKeyboardButton("💿 BOOT IMAGE", callback_data="main_boot"),
-        types.InlineKeyboardButton("⚡ AVINCHARD", callback_data="main_avinchard")
-    )
-    return markup
-
 def get_non_root_markup():
-    markup = types.InlineKeyboardMarkup(row_width=1)
-    markup.add(
-        types.InlineKeyboardButton("🔑 PRIMEHOOK", callback_data="panel_primehook"),
-        types.InlineKeyboardButton("🔹 DRIP CLIENT", callback_data="panel_drip_client"),
-        types.InlineKeyboardButton("🔹 DRIP PROXY", callback_data="panel_drip_proxy"),
-        types.InlineKeyboardButton("🔹 SILENT NON ROOT", callback_data="panel_silent_non_root"),
-        types.InlineKeyboardButton("🔹 HG CLIENT", callback_data="panel_hg_client"),
-        types.InlineKeyboardButton("🔹 BR MOD NON ROOT", callback_data="panel_br_mod"),
-        types.InlineKeyboardButton("🔹 PATI BLUE", callback_data="panel_pati_blue"),
-        types.InlineKeyboardButton("🔹 PATO ORANGE", callback_data="panel_pato_orange"),
-        types.InlineKeyboardButton("🔙 Back to Main Shop", callback_data="main_shop")
-    )
+    markup = types.InlineKeyboardMarkup(row_width=2)
+    markup.row(types.InlineKeyboardButton("🔑 PRIMEHOOK", callback_data="non_root_primehook"))
+    markup.row(types.InlineKeyboardButton("🔹 DRIP CLIENT", callback_data="non_root_drip_client"), types.InlineKeyboardButton("🔹 DRIP PROXY", callback_data="non_root_drip_proxy"))
+    markup.row(types.InlineKeyboardButton("🔹 SILENT NON ROOT", callback_data="non_root_silent_non_root"))
+    markup.row(types.InlineKeyboardButton("🔹 HG CLIENT", callback_data="non_root_hg_client"))
+    markup.row(types.InlineKeyboardButton("🔹 BR MOD NON ROOT", callback_data="non_root_br_mod"))
+    markup.row(types.InlineKeyboardButton("🔹 PATI BLUE", callback_data="non_root_pati_blue"), types.InlineKeyboardButton("🔹 PATO ORANGE", callback_data="non_root_pato_orange"))
+    markup.row(types.InlineKeyboardButton("↩️ Back to Shop", callback_data="back_to_shop_clean"))
     return markup
 
-# 🚀 STEP 1: INITIAL COMMAND ROUTE (START)
-@bot.message_handler(commands=['start', 'shop'])
-def send_welcome(message):
-    bot.send_message(
-        message.chat.id, 
-        "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n🛒 **WELCOME TO PREMIUM SHOP**\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n\nChoose your panel category below 📥:", 
-        reply_markup=get_main_shop_markup(),
-        parse_mode="Markdown"
-    )
+def get_brands_markup():
+    device_data = load_device_data()
+    markup = types.InlineKeyboardMarkup(row_width=2)
+    row = []
+    for brand_id, brand_info in device_data.items():
+        row.append(types.InlineKeyboardButton(brand_info["name"], callback_data=f"brand_{brand_id}_0"))
+        if len(row) == 2:
+            markup.row(*row); row = []
+    if row: markup.row(*row)
+    markup.add(types.InlineKeyboardButton("↩️ Back to Shop", callback_data="back_to_shop_clean"))
+    return markup
 
-# 🎛️ STEP 2: CALLBACK HANDLERS FOR NAVIGATION
-@bot.callback_query_handler(func=lambda call: True)
-def handle_query(call):
+def build_timer_text(remaining):
+    total = 120
+    minutes, seconds = divmod(remaining, 60)
+    filled_slots = round(((total - remaining) / total) * 10)
+    bar = "▓" * filled_slots + "░" * (10 - filled_slots)
+    return f"✅ *Payment Done!*\n━━━━━━━━━━━━━━\n🔍 Verifying your payment...\n\n`[{bar}]`\n🕐 *{minutes:02}:{seconds:02}* remaining\n━━━━━━━━━━━━━━"
+
+def run_payment_timer(chat_id, message_id):
+    for remaining in range(120, -1, -2):
+        try: bot.edit_message_text(chat_id=chat_id, message_id=message_id, text=build_timer_text(remaining), parse_mode="Markdown")
+        except: pass
+        time.sleep(2)
+    try: bot.edit_message_text(chat_id=chat_id, message_id=message_id, text="⚠️ *Payment Not Received*", parse_mode="Markdown")
+    except: pass
+
+def send_payment_details(chat_id, item_name, amount):
+    markup = types.InlineKeyboardMarkup()
+    markup.add(types.InlineKeyboardButton("✅ Payment Done", callback_data="payment_done"))
+    markup.add(types.InlineKeyboardButton("↩️ Back to Shop", callback_data="back_to_shop_clean"))
     
-    if call.data == "main_shop":
+    payment_text = f"💸 **PAYMENT DETAILS**\n\n🔹 **Item:** {item_name}\n🔹 **Amount:** ₹{amount}\n🔹 **Time:** Instant Delivery\n\n📌 *Scan the QR code to pay ₹{amount}.*"
+    
+    with open(QR_IMAGE_PATH, "rb") as qr_image:
+        bot.send_photo(chat_id, photo=qr_image, caption=payment_text, reply_markup=markup, parse_mode="Markdown")
+
+@bot.message_handler(commands=["shop", "start"])
+def send_shop_menu(message):
+    bot.send_message(message.chat.id, "🛒 **SHOP MENU**\n\nChoose an option below to proceed:", reply_markup=main_menu_markup(), parse_mode="Markdown")
+
+@bot.callback_query_handler(func=lambda call: True)
+def handle_menu_clicks(call):
+    if call.data == "main_root_app":
+        try: bot.delete_message(call.message.chat.id, call.message.message_id)
+        except: pass
+        send_payment_details(call.message.chat.id, "Root App", 100)
+    
+    elif call.data == "main_boot_image":
+        try: bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="📱 **SELECT BRAND**", reply_markup=get_brands_markup(), parse_mode="Markdown")
+        except: bot.send_message(call.message.chat.id, "📱 **SELECT BRAND**", reply_markup=get_brands_markup(), parse_mode="Markdown")
+    
+    elif call.data == "payment_done":
         bot.answer_callback_query(call.id)
-        bot.edit_message_text(
-            chat_id=call.message.chat.id,
-            message_id=call.message.message_id,
-            text="▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n🛒 **WELCOME TO PREMIUM SHOP**\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n\nChoose your panel category below 📥:",
-            reply_markup=get_main_shop_markup(),
-            parse_mode="Markdown"
-        )
+        sent = bot.send_message(call.message.chat.id, build_timer_text(120), parse_mode="Markdown")
+        threading.Thread(target=run_payment_timer, args=(sent.chat.id, sent.message_id), daemon=True).start()
+
+    elif call.data == "main_aincard":
+        try: bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="💳 **AINCARD MENU**", reply_markup=get_aincard_markup(), parse_mode="Markdown")
+        except: bot.send_message(call.message.chat.id, "💳 **AINCARD MENU**", reply_markup=get_aincard_markup(), parse_mode="Markdown")
+
+    elif call.data in ["aincard_key", "aincard_key_app"]:
+        bot.answer_callback_query(call.id)
+        try: bot.delete_message(call.message.chat.id, call.message.message_id)
+        except: pass
+        amount = 20 if call.data == "aincard_key" else 100
+        send_payment_details(call.message.chat.id, "Aincard Key" if amount == 20 else "Aincard Key App", amount)
 
     elif call.data == "main_non_root":
+        try: bot.edit_message_text(chat_id=call.message.chat.id, message_id=call.message.message_id, text="📱 **NON ROOT PANEL**", reply_markup=get_non_root_markup(), parse_mode="Markdown")
+        except: bot.send_message(call.message.chat.id, "📱 **NON ROOT PANEL**", reply_markup=get_non_root_markup(), parse_mode="Markdown")
+
+    elif call.data.startswith("non_root_"):
         bot.answer_callback_query(call.id)
-        try:
-            bot.edit_message_text(
-                chat_id=call.message.chat.id,
-                message_id=call.message.message_id,
-                text="▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n👾 **NON ROOT PANEL**\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n\nChoose a cheat/tool from the list below 📥",
-                reply_markup=get_non_root_markup(),
-                parse_mode="Markdown"
-            )
-        except Exception:
-            bot.delete_message(call.message.chat.id, call.message.message_id)
-            bot.send_message(
-                call.message.chat.id,
-                text="▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n👾 **NON ROOT PANEL**\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n\nChoose a cheat/tool from the list below 📥",
-                reply_markup=get_non_root_markup(),
-                parse_mode="Markdown"
-            )
+        if call.data in NON_ROOT_PLANS:
+            bot.send_message(call.message.chat.id, NON_ROOT_PLANS[call.data], parse_mode="Markdown")
 
-    elif call.data == "main_root":
-        bot.answer_callback_query(call.id)
-        markup = types.InlineKeyboardMarkup(row_width=1)
-        markup.add(
-            types.InlineKeyboardButton("🛡️ ROOT PRIMEHOOK", callback_data="panel_root_prime"),
-            types.InlineKeyboardButton("🛡️ ROOT DRIP CLIENT", callback_data="panel_root_drip"),
-            types.InlineKeyboardButton("🔙 Back to Main Shop", callback_data="main_shop")
-        )
-        bot.edit_message_text(
-            chat_id=call.message.chat.id, message_id=call.message.message_id,
-            text="▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n🛡️ **ROOT PANEL**\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n\nSelect Root Package:",
-            reply_markup=markup, parse_mode="Markdown"
-        )
+    elif call.data == "back_to_shop_clean":
+        try: bot.delete_message(call.message.chat.id, call.message.message_id)
+        except: pass
+        bot.send_message(call.message.chat.id, "🛒 **SHOP MENU**\n\nChoose an option below to proceed:", reply_markup=main_menu_markup(), parse_mode="Markdown")
 
-    elif call.data == "main_boot":
-        bot.answer_callback_query(call.id)
-        markup = types.InlineKeyboardMarkup(row_width=1)
-        markup.add(
-            types.InlineKeyboardButton("💿 GET CUSTOM BOOT IMAGE", callback_data="panel_boot_img"),
-            types.InlineKeyboardButton("🔙 Back to Main Shop", callback_data="main_shop")
-        )
-        bot.edit_message_text(
-            chat_id=call.message.chat.id, message_id=call.message.message_id,
-            text="▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n💿 **BOOT IMAGE SUBMENU**\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n\nSelect Package:",
-            reply_markup=markup, parse_mode="Markdown"
-        )
-
-    elif call.data == "main_avinchard":
-        bot.answer_callback_query(call.id)
-        markup = types.InlineKeyboardMarkup(row_width=1)
-        markup.add(
-            types.InlineKeyboardButton("⚡ AVINCHARD PREMIUM BYPASS", callback_data="panel_avinchard"),
-            types.InlineKeyboardButton("🔙 Back to Main Shop", callback_data="main_shop")
-        )
-        bot.edit_message_text(
-            chat_id=call.message.chat.id, message_id=call.message.message_id,
-            text="▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n⚡ **AVINCHARD MENU**\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n\nSelect Package:",
-            reply_markup=markup, parse_mode="Markdown"
-        )
-
-    elif call.data.startswith("panel_"):
-        bot.answer_callback_query(call.id)
-        key_type = call.data.replace("panel_", "")
-        
-        if key_type in PLANS_DATA:
-            item_info = PLANS_DATA[key_type]
-            markup = types.InlineKeyboardMarkup(row_width=1)
-            
-            for duration, price in item_info["prices"].items():
-                d_label = duration.replace("1d", "1 Day").replace("3d", "3 Days").replace("7d", "7 Days").replace("15d", "15 Days").replace("30d", "30 Days")
-                markup.add(types.InlineKeyboardButton(f"⏱️ {d_label} — ₹{price}", callback_data=f"pay_{key_type}_{duration}"))
-            
-            back_target = "main_non_root" if "root_" not in key_type and key_type not in ["boot_img", "avinchard"] else "main_shop"
-            markup.add(types.InlineKeyboardButton("🔙 Back to List", callback_data=back_target))
-
-            try:
-                bot.edit_message_text(
-                    chat_id=call.message.chat.id, message_id=call.message.message_id,
-                    text=f"▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n👾 **{item_info['name']}**\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n\nChoose a plan 📥",
-                    reply_markup=markup, parse_mode="Markdown"
-                )
-            except Exception:
-                bot.delete_message(call.message.chat.id, call.message.message_id)
-                bot.send_message(
-                    call.message.chat.id,
-                    text=f"▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n👾 **{item_info['name']}**\n▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬\n\nChoose a plan 📥",
-                    reply_markup=markup, parse_mode="Markdown"
-                )
-
-    elif call.data.startswith("pay_"):
-        bot.answer_callback_query(call.id)
-        parts = call.data.split("_")
-        duration = parts[-1] 
-        key_type = "_".join(parts[1:-1]) 
-        
-        if key_type in PLANS_DATA and duration in PLANS_DATA[key_type]["prices"]:
-            item_info = PLANS_DATA[key_type]
-            amount = item_info["prices"][duration]
-            
-            display_duration = duration.upper().replace("D", " DAYS").replace("S DAYS", " DAY")
-            if duration == "1d": display_duration = "1 DAY"
-
-            try:
-                bot.delete_message(call.message.chat.id, call.message.message_id)
-            except Exception:
-                pass
-            
-            markup = types.InlineKeyboardMarkup(row_width=1)
-            done_btn = types.InlineKeyboardButton("✅ Payment Done", callback_data="payment_done")
-            back_btn = types.InlineKeyboardButton("🔙 Back to Options", callback_data=f"panel_{key_type}")
-            markup.add(done_btn, back_btn)
-
-            payment_text = (
-                f"💸 🖥️ **{item_info['name']}** 🖥️ 💸\n"
-                f"━━━━━━━━━━━━━━━━━━━━\n"
-                f"✅ **SELECTED PLAN:** `{display_duration}`\n"
-                f"💰 **TOTAL AMOUNT:** `₹{amount}`\n"
-                f"⚡️ **DELIVERY STATUS:** `Instant Key`\n"
-                f"━━━━━━━━━━━━━━━━━━━━\n"
-                f"📌 *Scan the QR code below to proceed with your ₹{amount} payment.*"
-            )
-
-            try:
-                with open(QR_IMAGE_PATH, "rb") as qr_image:
-                    bot.send_photo(
-                        call.message.chat.id, photo=qr_image,
-                        caption=payment_text, reply_markup=markup, parse_mode="Markdown"
-                    )
-            except FileNotFoundError:
-                bot.send_message(call.message.chat.id, f"❌ Error: `{QR_IMAGE_PATH}` file aapki script ke sath nahi mili!")
-
-    elif call.data == "payment_done":
-        bot.answer_callback_query(call.id, "Verifying payment... Please wait!", show_alert=True)
-
-# Run Bot
 bot.infinity_polling()
-                
+                                   
