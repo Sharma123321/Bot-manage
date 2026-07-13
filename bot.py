@@ -10,7 +10,7 @@ TOKEN = os.environ["TOKEN"]
 bot = telebot.TeleBot(TOKEN)
 
 BASE_DIR = os.path.dirname(__file__)
-QR_IMAGE_PATH = os.path.join(BASE_DIR, "assets", "upi_qr.jpg")
+QR_IMAGE_PATH = os.path.join(BASE_DIR, "upi_qr.jpg")
 DEVICES_JSON_PATH = os.path.join(BASE_DIR, "devices.json")
 MODELS_PER_PAGE = 8
 
