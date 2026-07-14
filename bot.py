@@ -415,7 +415,6 @@ def handle_menu_clicks(call):
         try:
             model_info = device_data[brand_id]["models"][model_id]
             qr_path = os.path.join(BASE_DIR, model_info["qr"])
-
             try:
                 bot.delete_message(call.message.chat.id, call.message.message_id)
             except Exception:
