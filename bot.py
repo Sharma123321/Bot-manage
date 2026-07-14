@@ -431,4 +431,5 @@ with open(qr_path, "rb") as photo:
 
 print("Bot started...")
 bot.infinity_polling()
-                
+
+            
