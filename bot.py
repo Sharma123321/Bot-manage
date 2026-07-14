@@ -425,14 +425,14 @@ def handle_menu_clicks(call):
             markup = types.InlineKeyboardMarkup()
             markup.add(types.InlineKeyboardButton("↩️ Back to Shop", callback_data="back_to_shop_clean"))
 
-             open(qr_path, "rb") as photo:
-                 open(QR_IMAGE_PATH, "rb") as photo:
-                    call.message.chat.id,
-                    photo=photo,
-                    caption=model_info["text"],
-                    reply_markup=markup,
-                    parse_mode="Markdown",
-                )
+             with open(qr_path, "rb") as photo:
+    bot.send_photo(
+        call.message.chat.id,
+        photo=photo,
+        caption=model_info["text"],
+        reply_markup=markup,
+        parse_mode="Markdown",
+    )
         except Exception:
             bot.answer_callback_query(call.id, text="⚠️ QR Code file nahi mili!", show_alert=True)
 
