@@ -386,15 +386,13 @@ def handle_menu_clicks(call):
             nav_buttons.append(types.InlineKeyboardButton("Next ➡️", callback_data=f"brand_{brand_id}_{page + 1}"))
         if nav_buttons:
             markup.row(*nav_buttons)
-
-        markup.add(types.InlineKeyboardButton("📱 Main Menu (Brands)", callback_data="back_to_brands"))
-
-        try:
-            bot.edit_message_text(
-                chat_id=call.message.chat.id,
-                message_id=call.message.message_id,
-                text=f"Selected: **{brand_name}** (Page {page + 1})\n\n👇 Apna model select karein:",
+except Exception:
+            bot.send_message(
+                call.message.chat.id,
+                f"Selected: **{brand_name}** (Page {page + 1})\n\n👇 Apna model select karein:",
                 reply_markup=markup,
+                parse_mode="Markdown",
+            )
                 parse_mode="Markdown",
             )
         except Exception:
