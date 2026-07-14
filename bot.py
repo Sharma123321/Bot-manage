@@ -382,7 +382,7 @@ def handle_menu_clicks(call):
         _,brand_id,model_id=call.data.split("_",2)
         try:
             model_info = device_data[brand_id]["models"][model_id]
-    qr_path = os.path.join(BASE_DIR, model_info["qr"])
+            qr_path = os.path.join(BASE_DIR, model_info["qr"])
 
     if not os.path.exists(qr_path):
         qr_path = QR_IMAGE_PATH
