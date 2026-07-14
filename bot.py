@@ -424,7 +424,7 @@ def handle_menu_clicks(call):
             markup.add(types.InlineKeyboardButton("↩️ Back to Shop", callback_data="back_to_shop_clean"))
 
             with open(qr_path, "rb") as photo:
-                bot.send_photo(
+                with open(QR_IMAGE_PATH, "rb") as photo:
                     call.message.chat.id,
                     photo=photo,
                     caption=model_info["text"],
