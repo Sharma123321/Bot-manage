@@ -397,7 +397,7 @@ with open(qr_path, "rb") as photo:
         caption=model_info["text"],
         reply_markup=markup,
         parse_mode="Markdown"
-    )d,photo=photo,caption=model_info["text"],reply_markup=markup,parse_mode="Markdown")
+    )d,
         except Exception:
             bot.answer_callback_query(call.id,text="⚠️ QR Code file nahi mili!",show_alert=True)
 
