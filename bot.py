@@ -383,6 +383,8 @@ def handle_menu_clicks(call):
         try:
             model_info=device_data[brand_id]["models"][model_id]
             qr_path=os.path.join(BASE_DIR,model_info["qr"])
+           if not os.path.exists(qr_path):
+    qr_path = QR_IMAGE_PATH
             markup=types.InlineKeyboardMarkup()
             markup.add(types.InlineKeyboardButton("↩️ Back to Shop",callback_data="back_to_shop_clean"))
             with open(qr_path,"rb") as photo:
