@@ -341,15 +341,60 @@ def handle_menu_clicks(call):
             )
 
     # --- NON ROOT PANEL ITEMS ---
-    elif call.data.startswith("non_root_"):
-        bot.answer_callback_query(call.id)
-        plan_text = NON_ROOT_PLANS.get(call.data)
-        if plan_text:
-            bot.send_message(
-                call.message.chat.id,
-                plan_text,
-                parse_mode="Markdown",
-            )
+    elif call.data in ["non_root_primehook", "non_root_drip_client"]:
+    markup = types.InlineKeyboardMarkup(row_width=1)
+
+    if call.data == "non_root_primehook":
+        markup.add(types.InlineKeyboardButton("1 DAY - ₹70", callback_data="pay_prime_70"))
+        markup.add(types.InlineKeyboardButton("3 DAY - ₹160", callback_data="pay_prime_160"))
+        markup.add(types.InlineKeyboardButton("7 DAY - ₹280", callback_data="pay_prime_280"))
+        markup.add(types.InlineKeyboardButton("15 DAY - ₹450", callback_data="pay_prime_450"))
+        markup.add(types.InlineKeyboardButton("30 DAY - ₹700", callback_data="pay_prime_700"))
+
+    else:
+        markup.add(types.InlineKeyboardButton("1 DAY - ₹60", callback_data="pay_drip_60"))
+        markup.add(types.InlineKeyboardButton("3 DAY - ₹140", callback_data="pay_drip_140"))
+        markup.add(types.InlineKeyboardButton("7 DAY - ₹260", callback_data="pay_drip_260"))
+        markup.add(types.InlineKeyboardButton("15 DAY - ₹400", callback_data="pay_drip_400"))
+        markup.add(types.InlineKeyboardButton("30 DAY - ₹600", callback_data="pay_drip_600"))
+
+    markup.add(types.InlineKeyboardButton("⬅️ Back", callback_data="main_non_root"))
+
+    bot.send_message(
+        call.message.chat.id,
+        "📦 Select Plan",
+        reply_markup=markup,
+    )
+
+elif call.data == "pay_prime_70":
+    send_payment_details(call.message.chat.id, "PrimeHook 1 DAY", 70)
+
+elif call.data == "pay_prime_160":
+    send_payment_details(call.message.chat.id, "PrimeHook 3 DAY", 160)
+
+elif call.data == "pay_prime_280":
+    send_payment_details(call.message.chat.id, "PrimeHook 7 DAY", 280)
+
+elif call.data == "pay_prime_450":
+    send_payment_details(call.message.chat.id, "PrimeHook 15 DAY", 450)
+
+elif call.data == "pay_prime_700":
+    send_payment_details(call.message.chat.id, "PrimeHook 30 DAY", 700)
+
+elif call.data == "pay_drip_60":
+    send_payment_details(call.message.chat.id, "Drip Client 1 DAY", 60)
+
+elif call.data == "pay_drip_140":
+    send_payment_details(call.message.chat.id, "Drip Client 3 DAY", 140)
+
+elif call.data == "pay_drip_260":
+    send_payment_details(call.message.chat.id, "Drip Client 7 DAY", 260)
+
+elif call.data == "pay_drip_400":
+    send_payment_details(call.message.chat.id, "Drip Client 15 DAY", 400)
+
+elif call.data == "pay_drip_600":
+    send_payment_details(call.message.chat.id, "Drip Client 30 DAY", 600)
 
 
     # --- BRAND SELECT HUA YA PAGE BADLA (Format: brand_<brandId>_<page>) ---
