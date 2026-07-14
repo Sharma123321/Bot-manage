@@ -420,13 +420,14 @@ except Exception:
                 bot.delete_message(call.message.chat.id, call.message.message_id)
             except Exception:
                 pass
-
-            markup = types.InlineKeyboardMarkup()
-            markup.add(types.InlineKeyboardButton("↩️ Back to Shop", callback_data="back_to_shop_clean"))
-
-             with open(qr_path, "rb") as photo:
-    bot.send_photo(
-        call.message.chat.id,
+with open(qr_path, "rb") as photo:
+                bot.send_photo(
+                    call.message.chat.id,
+                    photo=photo,
+                    caption=model_info["text"],
+                    reply_markup=markup,
+                    parse_mode="Markdown",
+    )
         photo=photo,
         caption=model_info["text"],
         reply_markup=markup,
