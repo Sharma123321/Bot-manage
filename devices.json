@@ -4,42 +4,42 @@
     "models": {
       "galaxy_s25_ultra": {
         "name": "Galaxy S25 Ultra",
-        "qr": "assets/upi_qr.jpg",
+        "qr": "upi_qr.jpg",
         "text": "💸 *PAYMENT DETAILS*\n\n🔹 *Item:* Boot Image - Galaxy S25 Ultra\n🔹 *Amount:* ₹200\n🔹 *Time:* Instant Delivery\n\n📌 *Scan the QR code to pay ₹200.*"
       },
       "galaxy_s25": {
         "name": "Galaxy S25+",
-        "qr": "assets/upi_qr.jpg",
+        "qr": "upi_qr.jpg",
         "text": "💸 *PAYMENT DETAILS*\n\n🔹 *Item:* Boot Image - Galaxy S25+\n🔹 *Amount:* ₹200\n🔹 *Time:* Instant Delivery\n\n📌 *Scan the QR code to pay ₹200.*"
       },
       "galaxy_s25_2": {
         "name": "Galaxy S25",
-        "qr": "assets/upi_qr.jpg",
+        "qr": "upi_qr.jpg",
         "text": "💸 *PAYMENT DETAILS*\n\n🔹 *Item:* Boot Image - Galaxy S25\n🔹 *Amount:* ₹200\n🔹 *Time:* Instant Delivery\n\n📌 *Scan the QR code to pay ₹200.*"
       },
       "galaxy_s24_ultra": {
         "name": "Galaxy S24 Ultra",
-        "qr": "assets/upi_qr.jpg",
+        "qr": "upi_qr.jpg",
         "text": "💸 *PAYMENT DETAILS*\n\n🔹 *Item:* Boot Image - Galaxy S24 Ultra\n🔹 *Amount:* ₹200\n🔹 *Time:* Instant Delivery\n\n📌 *Scan the QR code to pay ₹200.*"
       },
       "galaxy_s24": {
         "name": "Galaxy S24+",
-        "qr": "assets/upi_qr.jpg",
+        "qr": "upi_qr.jpg",
         "text": "💸 *PAYMENT DETAILS*\n\n🔹 *Item:* Boot Image - Galaxy S24+\n🔹 *Amount:* ₹200\n🔹 *Time:* Instant Delivery\n\n📌 *Scan the QR code to pay ₹200.*"
       },
       "galaxy_s24_2": {
         "name": "Galaxy S24",
-        "qr": "assets/upi_qr.jpg",
+        "qr": "upi_qr.jpg",
         "text": "💸 *PAYMENT DETAILS*\n\n🔹 *Item:* Boot Image - Galaxy S24\n🔹 *Amount:* ₹200\n🔹 *Time:* Instant Delivery\n\n📌 *Scan the QR code to pay ₹200.*"
       },
       "galaxy_s24_fe": {
         "name": "Galaxy S24 FE",
-        "qr": "assets/upi_qr.jpg",
+        "qr": "upi_qr.jpg",
         "text": "💸 *PAYMENT DETAILS*\n\n🔹 *Item:* Boot Image - Galaxy S24 FE\n🔹 *Amount:* ₹200\n🔹 *Time:* Instant Delivery\n\n📌 *Scan the QR code to pay ₹200.*"
       },
       "galaxy_s23_ultra": {
         "name": "Galaxy S23 Ultra",
-        "qr": "assets/upi_qr.jpg",
+        "qr": "upi_qr.jpg",
         "text": "💸 *PAYMENT DETAILS*\n\n🔹 *Item:* Boot Image - Galaxy S23 Ultra\n🔹 *Amount:* ₹200\n🔹 *Time:* Instant Delivery\n\n📌 *Scan the QR code to pay ₹200.*"
       },
       "galaxy_s23": {
