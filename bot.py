@@ -386,8 +386,8 @@ def handle_menu_clicks(call):
             if not os.path.exists(qr_path):
                 qr_path = QR_IMAGE_PATH
                 
-                markup = types.InlineKeyboardMarkup()
-    ...
+                markup = types.InlineKeyboardMarkup() 
+                ...
     
         except Exception:
             bot.answer_callback_query(call.id,text="⚠️ QR Code file nahi mili!",show_alert=True)
