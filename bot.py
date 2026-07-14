@@ -399,12 +399,12 @@ def handle_menu_clicks(call):
             )
         except Exception:
             with open(QR_IMAGE_PATH, "rb") as photo:
-   with bot.send_photo(
-        call.message.chat.id,
-        photo=photo,
-        caption=model_info["text"],
-        reply_markup=markup,
-        parse_mode="Markdown",
+   bot.send_photo(
+                    call.message.chat.id,
+                    photo=photo,
+                    caption=model_info["text"],
+                    reply_markup=markup,
+                    parse_mode="Markdown",
     )
 
     # --- MODEL SELECT HUA -> QR CODE BHEJO ---
