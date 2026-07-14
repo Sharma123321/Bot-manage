@@ -398,12 +398,14 @@ def handle_menu_clicks(call):
                 parse_mode="Markdown",
             )
         except Exception:
-            bot.send_message(
-                call.message.chat.id,
-                f"Selected: **{brand_name}** (Page {page + 1})\n\n👇 Apna model select karein:",
-                reply_markup=markup,
-                parse_mode="Markdown",
-            )
+            with open(QR_IMAGE_PATH, "rb") as photo:
+    bot.send_photo(
+        call.message.chat.id,
+        photo=photo,
+        caption=model_info["text"],
+        reply_markup=markup,
+        parse_mode="Markdown",
+    )
 
     # --- MODEL SELECT HUA -> QR CODE BHEJO ---
     elif call.data.startswith("model_"):
