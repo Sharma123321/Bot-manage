@@ -399,7 +399,7 @@ def handle_menu_clicks(call):
             )
         except Exception:
             with open(QR_IMAGE_PATH, "rb") as photo:
-    bot.send_photo(
+   with bot.send_photo(
         call.message.chat.id,
         photo=photo,
         caption=model_info["text"],
