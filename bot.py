@@ -386,12 +386,17 @@ def handle_menu_clicks(call):
             if not os.path.exists(qr_path):
                 qr_path = QR_IMAGE_PATH
                 
-                markup = types.InlineKeyboardMarkup() 
-                ...
-    
-        except Exception:
-            bot.answer_callback_query(call.id,text="⚠️ QR Code file nahi mili!",show_alert=True)
+                markup = types.InlineKeyboardMarkup()
+markup.add(types.InlineKeyboardButton("↩️ Back to Shop", callback_data="back_to_shop_clean"))
 
+with open(qr_path, "rb") as photo:
+    bot.send_photo(
+        call.message.chat.id,
+        photo=photo,
+        caption=model_info["text"],
+        reply_markup=markup,
+        parse_mode="Markdown"
+    )
     # --- WAPAS BRANDS LIST PAR JAANE KE LIYE ---
     elif call.data == "back_to_brands":
         try:
