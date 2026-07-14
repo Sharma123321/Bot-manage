@@ -385,8 +385,8 @@ def handle_menu_clicks(call):
             qr_path = os.path.join(BASE_DIR, model_info["qr"])
             if not os.path.exists(qr_path):
                 qr_path = QR_IMAGE_PATH
-
-    markup = types.InlineKeyboardMarkup()
+                
+                markup = types.InlineKeyboardMarkup()
     ...
     
         except Exception:
